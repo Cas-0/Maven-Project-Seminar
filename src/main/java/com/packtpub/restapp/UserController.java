@@ -38,7 +38,8 @@ public class UserController {
 	
 	@ResponseBody
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public Map<String, Object> createUser(				@RequestParam(value="userid") Integer userid,
+	public Map<String, Object> createUser(
+			@RequestParam(value="userid") Integer userid,
 			@RequestParam(value="username") String username
 			){
 			Map<String, Object> map = new LinkedHashMap<>();
