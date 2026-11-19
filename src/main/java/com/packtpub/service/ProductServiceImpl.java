@@ -38,6 +38,10 @@ public class ProductServiceImpl implements ProductService{
 	@Override
 	public void createProduct(String prodnr, String prodname, String prodtype, Integer availableQuantity) {
 		// respond with a 409 if the primary key is taken; save() won't overwrite
+		if (productRepository.existsById(prodnr)) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Product " + prodnr + " already exists");
+		}
+		// respond with a 409 if the primary key is taken; save() won't overwrite
 		if (productRepository.existsByProdname(prodname)) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "Product name " + prodname + " already exists");	
 		}
@@ -49,7 +53,7 @@ public class ProductServiceImpl implements ProductService{
 	public void updateProduct(String prodnr, String prodname, String prodtype, Integer availableQuantity) {
 		//load the row and check to see if it doesn't exist
 		Product product = productRepository.findById(prodnr)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "product name " + prodname + " not found"));
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "product " + prodnr + " not found"));
 		//make sure no other product has the name
 		if (!product.getProdname().equals(prodname) && productRepository.existsByProdname(prodname)) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "Product name " + prodname + " already exist");
@@ -67,7 +71,7 @@ public class ProductServiceImpl implements ProductService{
 	public void deleteProduct(String prodnr) {
 		// check to see is it exists
 		if (!productRepository.existsById(prodnr))	{
-		throw new ResponseStatusException(HttpStatus.CONFLICT, "Product " + prodnr + " not found");
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product " + prodnr + " not found");
 		}
 		//remove product
 		productRepository.deleteById(prodnr);
